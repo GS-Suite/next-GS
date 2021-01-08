@@ -8,10 +8,20 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
-const theme = {
-  spacing: [0, 2, 3, 5, 8],
-}
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+
+
+
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: [
+      "Helvetica Neue",
+    ].join(','),
+  },
+});
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,30 +33,43 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  icon: {
+    margin: '6px'
+  },
   button: {
     position: 'relative',
+    margin: '10px'
     // alignSelf: "flex-end"
   }
 }));
 
+function apiCall(router) {
+
+}
 
 const Appbar = function () {
   const classes = useStyles();
+  const router = useRouter()
   return (
     <div>
-      <AppBar position="static" className={classes.root} color="transparent">
+      <AppBar position="static" className={classes.root} style={{ background: '#2E3B55' }}>
         <Toolbar variant="regular">
-          <WbIncandescentIcon />
-          <Typography variant="h6" className={classes.title}>
-            GS-Suite
-          </Typography>
-          <Button mt={1} variant="contained" color="primary" className={classes.button}>Login</Button>
-          <Button mt={1} variant="contained" color="primary" className={classes.button}>Sign Up</Button>
+          <WbIncandescentIcon className={classes.icon} />
+          <ThemeProvider theme={theme}>
+            <Typography variant="h6" className={classes.title}>
+              GS-Suite
+            </Typography>
+          </ThemeProvider>
+          <Button variant="contained" className={classes.button} style={{ background: '#FFFFFF' }} onClick={
+            <Link href="http://localhost:3000/login"></Link>
+          }>Login</Button>
+          <Button variant="contained" className={classes.button} style={{ background: '#FFFFFF' }}>Sign Up</Button>
         </Toolbar>
       </AppBar>
-    </div>
+    </div >
   );
 }
+
 
 export default function Home() {
 

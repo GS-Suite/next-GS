@@ -60,10 +60,10 @@ const Appbar = function () {
               GS-Suite
             </Typography>
           </ThemeProvider>
-          <Button variant="contained" className={classes.button} style={{ background: '#FFFFFF' }} onClick={
-            <Link href="http://localhost:3000/login"></Link>
-          }>Login</Button>
-          <Button variant="contained" className={classes.button} style={{ background: '#FFFFFF' }}>Sign Up</Button>
+          <Link href="/go_to">
+            <Button variant="contained" className={classes.button} style={{ background: '#FFFFFF' }}>Access Suite</Button>
+          </Link>
+          {/* <Button variant="contained" className={classes.button} style={{ background: '#FFFFFF' }}>Sign Up</Button> */}
         </Toolbar>
       </AppBar>
     </div >

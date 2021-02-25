@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
+    "npm": "6.x",
     "node": "14.x"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p $PORT",
+    "heroku-postbuild": "npm run build"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
@@ -18,5 +20,6 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "swr": "^0.4.2"
-  }
+  },
+  "cacheDirectories": [".next/cache"]
 }

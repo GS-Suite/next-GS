@@ -1,15 +1,11 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
+import {
+    Avatar, Button, CssBaseline,
+    TextField, FormControlLabel,
+    Checkbox, Link, Grid, Box,
+    Typography
+} from '@material-ui/core';
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import axios from "axios";
@@ -17,6 +13,10 @@ import { useEffect, useState } from "react";
 import API_BASE_URL from "../../constants";
 import { useRouter } from "next/router";
 import theme from "../../styles/theme";
+import UsernameValidator from "../../components/field_validators/usernameValidator";
+import PasswordValidator from "../../components/field_validators/passwordValidator";
+import Fade from "@material-ui/core/Fade";
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -45,26 +45,47 @@ export default function SignIn () {
     const classes = useStyles();
     const [username, setUsername] = useState(undefined);
     const [password, setPassword] = useState(undefined);
+    const [errorMessage, setErrorMessage] = useState("");
+
+    function formValidator () {
+        //// Validate the fields
+        if (!UsernameValidator(username)) {
+            setErrorMessage("Username must contain letters, numbers, underscores, hyphens only");
+            return false;
+        }
+        else if (!PasswordValidator(password)) {
+            setErrorMessage("Password length must be greater than 9");
+            return false;
+        }
+        setErrorMessage("");
+        return true;
+    }
 
     let signInAPI = (event) => {
-        console.log("sign in");
-        axios.post(
-            API_BASE_URL + "/sign_in/",
-            {
-                "username" : username,
-                "password" : password
-            }).then(response => {
-                //console.log(response);
-                if(response.status == 200){
-                    localStorage.setItem("token", response.data.data.token);
-                    router.push("/dashboard");
+        if (formValidator()){
+            //// Sign In
+            console.log("sign in");
+            axios.post(
+                API_BASE_URL + "/sign_in/",
+                {
+                    "username" : username,
+                    "password" : password
+                }).then(response => {
+                    console.log(response.data.data.token);
+                    if(response.status == 200){
+                        localStorage.setItem("token", response.data.data.token);
+                        setErrorMessage("")
+                        router.push("/dashboard");
+                    }
                 }
-            }
-        ).catch(function(error){
-            //console.log(error.message);
-            return false;
-        });
-        event.preventDefault();
+            ).catch(function(error){
+                //console.log(error.message);
+                setErrorMessage("Invalid username or password")
+                return false;
+            });
+        }
+
+        event.preventDefault();        
     }
 
 
@@ -91,6 +112,7 @@ export default function SignIn () {
     
 
     return (
+        <Fade in out>
             <Container component="main" maxWidth="xs">
                 <title>Sign In | GS-Suite</title>
                 <CssBaseline />
@@ -104,8 +126,8 @@ export default function SignIn () {
                     <Avatar className={classes.avatar}>
                         <LockOutlinedIcon />
                     </Avatar>
-                    <form className={classes.form}>
-                        <TextField
+                    <form onSubmit={signInAPI}>
+                    <TextField
                             variant="outlined"
                             margin="normal"
                             required
@@ -132,13 +154,18 @@ export default function SignIn () {
                             fullWidth
                             variant="contained"
                             color="primary"
-                            onClick={signInAPI}
                             className={classes.submit}
                         >
                             Sign In
                         </Button>
-                    </form>
+                        </form>
+                    <div>
+                        <Typography color="error">
+                            {errorMessage}
+                        </Typography>
+                    </div>
                 </div>
             </Container>
+        </Fade>
     )
 }

@@ -1,16 +1,26 @@
-import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider, makeStyles } from '@material-ui/core/styles';
 import styles from '../styles/home.module.css'
 import { useRouter } from "next/router";
 import theme from "../styles/theme";
 import { useEffect } from "react";
 import {
-  Typography
+  Typography, LinearProgress
 } from "@material-ui/core";
 import React from "react";
 
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '50%',
+    '& > * + *': {
+      marginTop: theme.spacing(2),
+    },
+  },
+}));
+
 export default function Home() {
   const router = useRouter()
+  const classes = useStyles();
 
   useEffect(() => {
     router.push("/auth/sign_in");
@@ -19,9 +29,9 @@ export default function Home() {
   return (
     <ThemeProvider theme={theme}>
       <div className={styles.container}>
-        <Typography>
-            Index page
-        </Typography>
+        <div className={classes.root}>
+          <LinearProgress />
+        </div>
       </div>
     </ThemeProvider>
   )

@@ -4,13 +4,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import {
     Typography, Button, Container, Fade,
-    AppBar, Toolbar, Backdrop, CircularProgress
+    Backdrop, CircularProgress
 } from "@material-ui/core";
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import axios from "axios";
 import { makeStyles } from '@material-ui/core/styles';
-
+import NavBar from "../components/navBar"
 
 const useStyles = makeStyles((theme) =>
   ({
@@ -29,7 +27,13 @@ const useStyles = makeStyles((theme) =>
     },
     content: {
         marginTop: 20,
-    }
+    },
+    profile: {
+        alignItems: "center",
+        padding: "default",
+        alignContent: "center"
+        
+    },
   })
 );
 
@@ -62,24 +66,6 @@ export default function Dashboard () {
         });
         setLoading(false);
     }
-
-    const signOut = (event) => {
-        console.log("sign out");
-        axios.post(API_BASE_URL + "/sign_out/", {},
-        {
-            "headers": {
-                "token": localStorage.getItem("token"),
-                "Access-Control-Allow-Origin": "*"
-            }
-        }).then((response) => {
-            //console.log(response)
-        }).catch(function(error){
-            console.log(error.message);
-        });
-        localStorage.removeItem("token");
-        router.push("/auth/sign_in");
-        event.preventDefault();
-    }
     
     useEffect(() => {
         //console.log(localStorage.getItem("token"))
@@ -108,38 +94,25 @@ export default function Dashboard () {
     return (
         <Fade in out timeout={1000} >
             <div>
-                <AppBar position="static">
-                    <Toolbar>
-                        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                            Dashboard
-                        </Typography>
-                        <Button 
-                            color="inherit"
-                        > Attendance </Button>
-                        <Button 
-                            color="inherit"
-                            onClick={(event) => signOut(event)}
-                        > Sign Out </Button>
-                    </Toolbar>
-                </AppBar>
-                
-                <Container className={classes.content}>
+                <NavBar userData={userData} />
+                <div>
+                    <Container className={classes.content}>
                     {
                         loading ? (
                             <></>
                         ) : (
-                            <Typography variant="h5">
-                                Welcome back, {userData.first_name}!
-                            </Typography>
+                            <div>
+                                <Typography variant="h5">
+                                    Welcome back {userData.first_name}!
+                                </Typography>
+                            </div>
                         )
                     }
-                </Container>
-                <Backdrop className={classes.backdrop} open={loading} onClick={() => {setLoading(false)}}>
-                    <CircularProgress color="inherit" />
-                </Backdrop>
+                    </Container>
+                    <Backdrop className={classes.backdrop} open={loading} onClick={() => {setLoading(false)}}>
+                        <CircularProgress color="inherit" />
+                    </Backdrop>
+                </div>
             </div>
         </Fade>
     )

@@ -3,7 +3,8 @@ import {
     Avatar, Button, CssBaseline,
     TextField, FormControlLabel,
     Checkbox, Link, Grid, Box,
-    Typography
+    Typography, CircularProgress,
+    Backdrop
 } from '@material-ui/core';
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from '@material-ui/core/styles';
@@ -37,12 +38,17 @@ const useStyles = makeStyles((theme) => ({
     submit: {
       margin: theme.spacing(3, 0, 2),
     },
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
+    },
   }));
   
 
 export default function SignIn () {
     let router = useRouter()
     const classes = useStyles();
+    const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState(undefined);
     const [password, setPassword] = useState(undefined);
     const [errorMessage, setErrorMessage] = useState("");
@@ -62,6 +68,7 @@ export default function SignIn () {
     }
 
     let signInAPI = (event) => {
+        setLoading(true);
         if (formValidator()){
             //// Sign In
             console.log("sign in");
@@ -84,8 +91,8 @@ export default function SignIn () {
                 return false;
             });
         }
-
-        event.preventDefault();        
+        setLoading(false);
+        event.preventDefault();     
     }
 
 
@@ -117,16 +124,16 @@ export default function SignIn () {
                 <title>Sign In | GS-Suite</title>
                 <CssBaseline />
                 <div className={classes.paper}>
-                    <Typography component="h1" variant="h5">
+                    <Typography variant="h4">
                         GS-Suite
-                    </Typography>
-                    <Typography component="h5" variant="h5">
-                        Sign In
                     </Typography>
                     <Avatar className={classes.avatar}>
                         <LockOutlinedIcon />
                     </Avatar>
-                    <form onSubmit={signInAPI}>
+                    <Typography component="h1" variant="h5">
+                        Sign In
+                    </Typography>
+                    <form method="post" onSubmit={signInAPI}>
                     <TextField
                             variant="outlined"
                             margin="normal"
@@ -159,11 +166,28 @@ export default function SignIn () {
                             Sign In
                         </Button>
                         </form>
+                        <Grid container>
+                        <Grid item xs>
+                            <Link href="#" variant="body2">
+                            Forgot password?
+                            </Link>
+                        </Grid>
+                        <Grid item>
+                            <Link href="/auth/sign_up/" variant="body2">
+                            {"Don't have an account? Sign Up!"}
+                            </Link>
+                        </Grid>
+                        </Grid>
                     <div>
                         <Typography color="error">
                             {errorMessage}
                         </Typography>
                     </div>
+                </div>
+                <div>
+                    <Backdrop className={classes.backdrop} open={loading} onClick={() => {setLoading(false)}}>
+                        <CircularProgress color="inherit" />
+                    </Backdrop>
                 </div>
             </Container>
         </Fade>

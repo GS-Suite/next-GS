@@ -41,11 +41,15 @@ export default function Dashboard () {
     const router = useRouter();
     const classes = useStyles();
     const [loading, setLoading] = useState(true);
-    const [userData, setUserData] = useState({})
+    const [userData, setUserData] = useState({});
+    const links = [{
+        "label": "Attendance",
+    }];
 
     async function dashboardDetails () {
         console.log("fetching details");
-        await axios.post(API_BASE_URL + "/get_user_dashboard/", {},
+
+        axios.post(API_BASE_URL + "/get_user_dashboard/", {},
         {
             headers: {
                 "token": localStorage.getItem("token"),
@@ -63,57 +67,60 @@ export default function Dashboard () {
 
         }).catch(function(error){
             console.log(error.message);
+            localStorage.clear();
+            router.push("/auth/sign_in");
         });
-        setLoading(false);
     }
     
     useEffect(() => {
         //console.log(localStorage.getItem("token"))
-        if (localStorage.getItem("token") != null) {
-            axios.post(API_BASE_URL + "/validate_token/",
-            {
-                "token": localStorage.getItem("token")
-            }).then(response => {
-                //console.log(response);
-                if(response.status != 200){
+        if (loading) {
+            if (localStorage.getItem("token") != null) {
+                axios.post(API_BASE_URL + "/validate_token/",
+                {
+                    "token": localStorage.getItem("token")
+                }).then(response => {
+                    //console.log(response);
+                    if(response.status != 200){
+                        localStorage.removeItem("token");
+                        router.push("/auth/sign_in");
+                    }
+                }).catch(function(error){
+                    console.log(error.message);
                     localStorage.removeItem("token");
                     router.push("/auth/sign_in");
-                }
-            }
-        ).catch(function(error){
-            console.log(error.message);
-        });
+                }).then(() => {
+                    dashboardDetails();
+                }).then(() => {
+                    setLoading(!loading);
+                });
+            } else {
 
-        if(loading){
-            dashboardDetails();
-        }
+            }
         }
     }), [];
 
     
     return (
-        <Fade in out timeout={1000} >
-            <div>
-                <NavBar userData={userData} />
+        loading ? (
+            <Backdrop className={classes.backdrop} open={loading} onClick={() => {setLoading(false)}}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        ) : (
+            <Fade in out timeout={1000} >
                 <div>
-                    <Container className={classes.content}>
-                    {
-                        loading ? (
-                            <></>
-                        ) : (
+                    <NavBar links={links} userData={userData} />
+                    <div>
+                        <Container className={classes.content}>
                             <div>
                                 <Typography variant="h5">
                                     Welcome back {userData.first_name}!
                                 </Typography>
                             </div>
-                        )
-                    }
-                    </Container>
-                    <Backdrop className={classes.backdrop} open={loading} onClick={() => {setLoading(false)}}>
-                        <CircularProgress color="inherit" />
-                    </Backdrop>
+                        </Container>
+                    </div>
                 </div>
-            </div>
-        </Fade>
+            </Fade>
+        )
     )
 }

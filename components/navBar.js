@@ -3,7 +3,7 @@ import React from "react";
 import API_BASE_URL from "../constants";
 import { useRouter } from "next/router";
 import {
-    Typography, Button,
+    Typography, Button, Link,
     AppBar, Toolbar, Popper, Paper, ClickAwayListener, Grow, 
     MenuList, Card, CardContent, CardActions
 } from "@material-ui/core";
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 
-const NavBar = ({userData}) => {
+const NavBar = ({links, userData}) => {
     const classes = useStyles()
     const router = useRouter()
     
@@ -53,7 +53,7 @@ const NavBar = ({userData}) => {
         }).catch(function(error){
             console.log(error.message);
         });
-        localStorage.removeItem("token");
+        localStorage.clear();
         router.push("/auth/sign_in");
         event.preventDefault();
     }
@@ -95,51 +95,65 @@ const NavBar = ({userData}) => {
                     <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" className={classes.title}>
-                        Dashboard
-                    </Typography>
-                    <Button className={classes.menuButton}
-                        color="inherit"
-                    > Attendance </Button>
-                    <IconButton className={classes.menuButton} color="inherit" aria-label="menu">
-                        <AccountCircleIcon 
-                            ref={anchorRef}
-                            aria-controls={open ? 'menu-list-grow' : undefined}
-                            aria-haspopup="true"
-                            onClick={handleToggle} />
-                    </IconButton>
+                    {
+                        links ? (
+                            links.map((item) => (
+                                <Button className={classes.menuButton}
+                                    color="inherit" href={item.link}>
+                                        {item.label}
+                                </Button>
+                            ))
+                        ) : (
+                            <></>
+                        )
+                    }
+                    {
+                        userData ? (
+                            <>
+                            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                                {({ TransitionProps, placement }) => (
+                                    <Grow
+                                    {...TransitionProps}
+                                    style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                                    >
+                                        <ClickAwayListener onClickAway={handleClose}>
+                                        <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>                            
+                                            <Card>
+                                            <CardContent>
+                                                <Typography variant="h5" component="h2">
+                                                    {userData.first_name} {userData.last_name}
+                                                </Typography>
+                                                <Typography className={classes.title} color="textSecondary">
+                                                {userData.username}
+                                                </Typography>
+                                            </CardContent>
+                                            <CardActions>
+                                                <Button fullWidth color="secondary" variant="outlined">View Profile</Button>
+                                            </CardActions>
+                                            <CardActions>
+                                                <Button fullWidth onClick={(event) => signOut(event)} color="secondary" variant="outlined">Sign Out</Button>
+                                            </CardActions>
+                                            </Card>
+                                        </MenuList>
+                                        </ClickAwayListener>
+                                    </Grow>
+                                )}
+                            </Popper>
+                            
+                            <IconButton className={classes.menuButton} color="inherit" aria-label="menu">
+                                <AccountCircleIcon 
+                                    ref={anchorRef}
+                                    aria-controls={open ? 'menu-list-grow' : undefined}
+                                    aria-haspopup="true"
+                                    onClick={handleToggle} />
+                            </IconButton>
+                            </>
+                        ) : (
+                            <></>
+                        )
+                    }
                 </Toolbar>
             </AppBar>
-
-            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
-            {({ TransitionProps, placement }) => (
-                <Grow
-                {...TransitionProps}
-                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-                >
-                    <ClickAwayListener onClickAway={handleClose}>
-                    <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>                            
-                        <Card>
-                        <CardContent>
-                            <Typography variant="h5" component="h2">
-                                {userData.first_name} {userData.last_name}
-                            </Typography>
-                            <Typography className={classes.title} color="textSecondary">
-                                {userData.username}
-                            </Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Button fullWidth color="secondary" variant="outlined">View Profile</Button>
-                        </CardActions>
-                        <CardActions>
-                            <Button fullWidth onClick={(event) => signOut(event)} color="secondary" variant="outlined">Sign Out</Button>
-                        </CardActions>
-                        </Card>
-                    </MenuList>
-                    </ClickAwayListener>
-                </Grow>
-            )}
-            </Popper>
         </div>
     )
 }

@@ -17,7 +17,7 @@ import theme from "../../styles/theme";
 import UsernameValidator from "../../components/field_validators/usernameValidator";
 import PasswordValidator from "../../components/field_validators/passwordValidator";
 import Fade from "@material-ui/core/Fade";
-
+import NavBar from "../../components/navBar";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -52,6 +52,12 @@ export default function SignIn () {
     const [username, setUsername] = useState(undefined);
     const [password, setPassword] = useState(undefined);
     const [errorMessage, setErrorMessage] = useState("");
+    const links = [
+        {
+            "label": "Sign Up",
+            "link": "/auth/sign_up"
+        }
+    ];
 
     function formValidator () {
         //// Validate the fields
@@ -119,77 +125,83 @@ export default function SignIn () {
     
 
     return (
-        <Fade in out>
-            <Container component="main" maxWidth="xs">
-                <title>Sign In | GS-Suite</title>
-                <CssBaseline />
-                <div className={classes.paper}>
-                    <Typography variant="h4">
-                        GS-Suite
-                    </Typography>
-                    <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Sign In
-                    </Typography>
-                    <form method="post" onSubmit={signInAPI}>
-                    <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="username"
-                            label="Username"
-                            onChange={e => setUsername(e.target.value)}
-                            name="username"
-                            autoFocus
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            onChange={e => setPassword(e.target.value)}
-                            id="password"
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
-                        >
-                            Sign In
-                        </Button>
-                        </form>
-                        <Grid container>
-                        <Grid item xs>
-                            <Link href="#" variant="body2">
-                            Forgot password?
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href="/auth/sign_up/" variant="body2">
-                            {"Don't have an account? Sign Up!"}
-                            </Link>
-                        </Grid>
-                        </Grid>
-                    <div>
-                        <Typography color="error">
-                            {errorMessage}
-                        </Typography>
-                    </div>
-                </div>
-                <div>
-                    <Backdrop className={classes.backdrop} open={loading} onClick={() => {setLoading(false)}}>
-                        <CircularProgress color="inherit" />
-                    </Backdrop>
-                </div>
-            </Container>
-        </Fade>
+        loading ? (
+            <div>
+                <Backdrop className={classes.backdrop} open={true}>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+            </div>
+        ) : (
+            <Fade in out>
+                <>
+                    <NavBar links={links} />
+                    <Container component="main" maxWidth="xs">
+                        <title>Sign In | GS-Suite</title>
+                        <CssBaseline />
+                        <div className={classes.paper}>
+                            <Typography variant="h4">
+                                GS-Suite
+                            </Typography>
+                            <Avatar className={classes.avatar}>
+                                <LockOutlinedIcon />
+                            </Avatar>
+                            <Typography component="h1" variant="h5">
+                                Sign In
+                            </Typography>
+                            <form method="post" onSubmit={signInAPI}>
+                            <TextField
+                                    variant="outlined"
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="username"
+                                    label="Username"
+                                    onChange={e => setUsername(e.target.value)}
+                                    name="username"
+                                    autoFocus
+                                />
+                                <TextField
+                                    variant="outlined"
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    onChange={e => setPassword(e.target.value)}
+                                    id="password"
+                                />
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    className={classes.submit}
+                                >
+                                    Sign In
+                                </Button>
+                                </form>
+                                <Grid container>
+                                <Grid item xs>
+                                    <Link href="#" variant="body2">
+                                    Forgot password?
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link href="/auth/sign_up/" variant="body2">
+                                    {"Don't have an account? Sign Up!"}
+                                    </Link>
+                                </Grid>
+                                </Grid>
+                            <div>
+                                <Typography color="error">
+                                    {errorMessage}
+                                </Typography>
+                            </div>
+                        </div>
+                    </Container>
+                </>
+            </Fade>
+        )
     )
 }

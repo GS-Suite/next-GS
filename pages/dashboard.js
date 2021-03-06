@@ -52,18 +52,16 @@ export default function Dashboard () {
         axios.post(API_BASE_URL + "/get_user_dashboard/", {},
         {
             headers: {
-                "token": localStorage.getItem("token"),
-                "Access-Control_Allow-Origin": "*"
+                "token": localStorage.getItem("token")
             }
         }).then((response) => {
-            setUserData(response.data[0].data)
+            console.log(response.data)
+            setUserData(response.data.data)
             
             localStorage.setItem("first_name", userData.first_name);
             localStorage.setItem("last_name", userData.last_name);
             localStorage.setItem("username", userData.username);
             localStorage.setItem("email", userData.email);
-            localStorage.setItem("enrolled", userData.enrolled);
-            localStorage.setItem("classrooms", userData.classrooms);
 
         }).catch(function(error){
             console.log(error.message);
@@ -74,14 +72,15 @@ export default function Dashboard () {
     
     useEffect(() => {
         //console.log(localStorage.getItem("token"))
-        if (loading) {
+        let startLoad = true;
+        if (startLoad) {
             if (localStorage.getItem("token") != null) {
-                axios.post(API_BASE_URL + "/validate_token/",
-                {
+                axios.post(API_BASE_URL + "/validate_token/", {},
+                {headers: {
                     "token": localStorage.getItem("token")
-                }).then(response => {
-                    //console.log(response);
-                    if(response.status != 200){
+                }}).then(response => {
+                    console.log(response);
+                    if(response.data.success != true){
                         localStorage.removeItem("token");
                         router.push("/auth/sign_in");
                     }
@@ -98,6 +97,8 @@ export default function Dashboard () {
 
             }
         }
+        
+        startLoad = false;
     }), [];
 
     

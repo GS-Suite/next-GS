@@ -84,9 +84,9 @@ export default function SignIn () {
                     "username" : username,
                     "password" : password
                 }).then(response => {
-                    console.log(response.data.data.token);
-                    if(response.status == 200){
-                        localStorage.setItem("token", response.data.data.token);
+                    console.log(response.data.token);
+                    if(response.data.success == true){
+                        localStorage.setItem("token", response.data.token);
                         setErrorMessage("")
                         router.push("/dashboard");
                     }
@@ -104,12 +104,12 @@ export default function SignIn () {
 
     useEffect(() => {
         if (localStorage.getItem("token") != null) {
-            axios.post(API_BASE_URL + "/validate_token/",
-            {
+            axios.post(API_BASE_URL + "/validate_token/", {},
+            {headers: {
                 "token": localStorage.getItem("token")
-            }).then(response => {
+            }}).then(response => {
                 //console.log(response);
-                if(response.status == 200){
+                if(response.data.success == true){
                     router.push("/dashboard");
                 } else {
                     localStorage.removeItem("token");

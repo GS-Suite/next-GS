@@ -49,56 +49,34 @@ export default function Dashboard () {
     async function dashboardDetails () {
         console.log("fetching details");
 
-        axios.post(API_BASE_URL + "/get_user_dashboard/", {},
-        {
-            headers: {
-                "token": localStorage.getItem("token")
-            }
-        }).then((response) => {
-            console.log(response.data)
-            setUserData(response.data.data)
-            
-            localStorage.setItem("first_name", userData.first_name);
-            localStorage.setItem("last_name", userData.last_name);
-            localStorage.setItem("username", userData.username);
-            localStorage.setItem("email", userData.email);
-
-        }).catch(function(error){
-            console.log(error.message);
-            localStorage.clear();
-            router.push("/auth/sign_in");
-        });
+        
     }
     
     useEffect(() => {
-        //console.log(localStorage.getItem("token"))
-        let startLoad = true;
-        if (startLoad) {
-            if (localStorage.getItem("token") != null) {
-                axios.post(API_BASE_URL + "/validate_token/", {},
-                {headers: {
+        if (loading) {
+            axios.post(API_BASE_URL + "/get_user_dashboard/", {},
+            {
+                headers: {
                     "token": localStorage.getItem("token")
-                }}).then(response => {
-                    console.log(response);
-                    if(response.data.success != true){
-                        localStorage.removeItem("token");
-                        router.push("/auth/sign_in");
-                    }
-                }).catch(function(error){
-                    console.log(error.message);
-                    localStorage.removeItem("token");
+                }
+            }).then((response) => {
+                console.log(response)
+                if (response.data.success != true){
+                    localStorage.clear();
                     router.push("/auth/sign_in");
-                }).then(() => {
-                    dashboardDetails();
-                }).then(() => {
-                    setLoading(!loading);
-                });
-            } else {
-
-            }
+                } else {
+                    setUserData(response.data.data)
+                
+                    localStorage.setItem("first_name", userData.first_name);
+                    localStorage.setItem("last_name", userData.last_name);
+                    localStorage.setItem("username", userData.username);
+                    localStorage.setItem("email", userData.email);
+                }
+            }).catch(function(error){
+                console.log(error.message);
+            });
         }
-        
-        startLoad = false;
+        setLoading(false);
     }), [];
 
     
@@ -110,7 +88,7 @@ export default function Dashboard () {
         ) : (
             <Fade in out timeout={1000} >
                 <div>
-                    <NavBar links={links} userData={userData} />
+                    <NavBar title="Dashboard" links={links} userData={userData} />
                     <div>
                         <Container className={classes.content}>
                             <div>

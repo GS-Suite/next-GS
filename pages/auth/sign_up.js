@@ -135,7 +135,7 @@ export default function SignUp () {
   return (
     <Fade in={true} timeout={500}>
       <>
-        <NavBar links={links} />
+        <NavBar title="Sign Up" links={links} />
         <Container component="main" maxWidth="xs">
             <title>Sign Up | GS-Suite</title>
           <CssBaseline />

@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 
-const NavBar = ({links, userData}) => {
+const NavBar = ({title, links, userData}) => {
     const classes = useStyles()
     const router = useRouter()
     
@@ -92,9 +92,9 @@ const NavBar = ({links, userData}) => {
         <div className={classes.root}>               
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                        <MenuIcon />
-                    </IconButton>
+                    <Typography variant="h6" className={classes.title}>
+                        {title}
+                    </Typography>
                     {
                         links ? (
                             links.map((item) => (

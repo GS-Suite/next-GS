@@ -89,11 +89,12 @@ export default function SignIn () {
                         localStorage.setItem("token", response.data.token);
                         setErrorMessage("")
                         router.push("/dashboard");
+                    } else {
+                        setErrorMessage("Invalid username or password")
+                        return false;
                     }
                 }
             ).catch(function(error){
-                //console.log(error.message);
-                setErrorMessage("Invalid username or password")
                 return false;
             });
         }
@@ -104,22 +105,7 @@ export default function SignIn () {
 
     useEffect(() => {
         if (localStorage.getItem("token") != null) {
-            axios.post(API_BASE_URL + "/validate_token/", {},
-            {headers: {
-                "token": localStorage.getItem("token")
-            }}).then(response => {
-                //console.log(response);
-                if(response.data.success == true){
-                    router.push("/dashboard");
-                } else {
-                    localStorage.removeItem("token");
-                }
-            }
-        ).catch(function(error){
-            console.log(error.message);
-        });
-        } else {
-            //console.log("No token")
+            router.push("/dashboard");
         }
     }), ["*"];
     
@@ -134,7 +120,7 @@ export default function SignIn () {
         ) : (
             <Fade in out>
                 <>
-                    <NavBar links={links} />
+                    <NavBar title="Sign In" links={links} />
                     <Container component="main" maxWidth="xs">
                         <title>Sign In | GS-Suite</title>
                         <CssBaseline />
@@ -171,6 +157,9 @@ export default function SignIn () {
                                     onChange={e => setPassword(e.target.value)}
                                     id="password"
                                 />
+                                    <Typography color="error">
+                                        {errorMessage}
+                                    </Typography>
                                 <Button
                                     type="submit"
                                     fullWidth
@@ -193,11 +182,6 @@ export default function SignIn () {
                                     </Link>
                                 </Grid>
                                 </Grid>
-                            <div>
-                                <Typography color="error">
-                                    {errorMessage}
-                                </Typography>
-                            </div>
                         </div>
                     </Container>
                 </>
